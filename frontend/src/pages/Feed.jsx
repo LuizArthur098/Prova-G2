@@ -8,12 +8,8 @@ function Feed() {
   const currentUser = localStorage.getItem('username');
 
   const fetchPosts = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/posts');
-      setPosts(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar posts", error);
-    }
+    const response = await axios.get('http://localhost:3000/posts');
+    setPosts(response.data);
   };
 
   useEffect(() => {
@@ -22,15 +18,19 @@ function Feed() {
 
   const handlePost = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post('http://localhost:3000/posts', { content }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setContent('');
-      fetchPosts(); 
-    } catch (error) {
-      alert("Sessão expirada ou erro ao publicar.");
-    }
+    await axios.post('http://localhost:3000/posts', { content }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setContent('');
+    fetchPosts();
+  };
+
+  const handleLike = async (postId) => {
+    if (!token) return alert("Faça login para curtir!");
+    await axios.post(`http://localhost:3000/posts/${postId}/like`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchPosts();
   };
 
   return (
@@ -52,7 +52,12 @@ function Feed() {
         <div key={post.id} className="box">
           <strong>@{post.username}</strong>
           <p>{post.content}</p>
-          <small>❤️ {post.likes} Curtidas</small>
+          <button 
+            onClick={() => handleLike(post.id)} 
+            style={{backgroundColor: '#e0245e', width: 'auto'}}
+          >
+            ❤️ {post.likes} Curtidas
+          </button>
         </div>
       ))}
     </div>
