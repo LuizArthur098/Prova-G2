@@ -46,4 +46,38 @@ app.post('/login', async (req, res) => {
     res.json({ message: "Login realizado!", token, username: user.username });
 });
 
+// --- ROTAS DE POSTS E CURTIDAS ---
+
+app.get('/posts', async (req, res) => {
+    const db = await openDb();
+    const posts = await db.all(`
+        SELECT p.id, p.content, p.created_at, u.username, 
+        (SELECT COUNT(*) FROM favorites WHERE post_id = p.id) as likes
+        FROM posts p JOIN users u ON p.user_id = u.id
+        ORDER BY p.created_at DESC
+    `);
+    res.json(posts);
+});
+
+app.post('/posts', verificarToken, async (req, res) => {
+    const { content } = req.body;
+    const db = await openDb();
+    await db.run('INSERT INTO posts (user_id, content) VALUES (?, ?)', [req.userId, content]);
+    res.status(201).json({ message: "Post publicado!" });
+});
+
+app.post('/posts/:id/like', verificarToken, async (req, res) => {
+    const postId = req.params.id;
+    const db = await openDb();
+    const jaCurtiu = await db.get('SELECT * FROM favorites WHERE user_id = ? AND post_id = ?', [req.userId, postId]);
+
+    if (jaCurtiu) {
+        await db.run('DELETE FROM favorites WHERE user_id = ? AND post_id = ?', [req.userId, postId]);
+        res.json({ message: "Descurtido." });
+    } else {
+        await db.run('INSERT INTO favorites (user_id, post_id) VALUES (?, ?)', [req.userId, postId]);
+        res.json({ message: "Curtido!" });
+    }
+});
+
 app.listen(3000, () => console.log('🚀 Backend rodando na porta 3000'));
