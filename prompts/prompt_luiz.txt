@@ -1,0 +1,4 @@
+prompt para estruturar o backend e banco de dados feito por LuizArthur098": 
+"Crie o código com as requisições que eu pedi, usando Express, 
+SQLite e garantindo que as senhas tenham HASH com bcrypt, 
+além da rota de curtir os posts.
