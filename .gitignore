@@ -1,0 +1,8 @@
+Plaintext
+
+backend/node_modules/
+backend/banco_prova.sqlite
+backend/banco_prova.sqlite-journal
+frontend/node_modules/
+frontend/dist/
+.DS_Store
