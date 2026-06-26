@@ -80,17 +80,10 @@ app.post('/posts/:id/like', verificarToken, async (req, res) => {
     }
 });
 
-async function iniciarServidor() {
-    try {
-        // Força o servidor a abrir o banco primeiro para garantir que as tabelas existam
-        const db = await openDb(); 
-        
-        app.listen(3000, () => {
-            console.log('🚀 Backend rodando na porta 3000 e banco de dados pronto!');
-        });
-    } catch (error) {
-        console.error("Erro ao iniciar o banco de dados:", error);
-    }
-}
+const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => {
+    console.log(`🚀 Backend rodando com sucesso na porta ${PORT}`);
+});
+    
 iniciarServidor();

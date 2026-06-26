@@ -2,22 +2,26 @@ const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
 
 async function openDb() {
-    return open({
-        // SE ESTIVER NA RENDER: Roda em memória. SE ESTIVER NO PC: Cria o arquivo local.
+    const db = await open({
         filename: process.env.RENDER ? ':memory:' : './banco_prova.sqlite',
         driver: sqlite3.Database
     });
+
+    // Se estiver na Render (em memória), cria as tabelas IMEDIATAMENTE antes de devolver a conexão
+    if (process.env.RENDER) {
+        await executarTabelas(db);
+    }
+
+    return db;
 }
-async function setupDb() {
-    const db = await openDb();
-    
+
+async function executarTabelas(db) {
     await db.exec(`
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
         );
-
         CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
@@ -25,7 +29,6 @@ async function setupDb() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id)
         );
-
         CREATE TABLE IF NOT EXISTS favorites (
             user_id INTEGER,
             post_id INTEGER,
@@ -34,7 +37,12 @@ async function setupDb() {
             FOREIGN KEY(post_id) REFERENCES posts(id)
         );
     `);
+    console.log("✅ Tabelas estruturadas com sucesso!");
 }
 
-setupDb();
+// Isso mantém o comportamento local no seu PC funcionando
+if (!process.env.RENDER) {
+    openDb().then(db => executarTabelas(db));
+}
+
 module.exports = { openDb };
