@@ -3,11 +3,11 @@ const { open } = require('sqlite');
 
 async function openDb() {
     return open({
-        filename: './banco_prova.sqlite',
+        // Se estiver na Render, roda em memória. Se estiver no seu PC, cria o arquivo local.
+        filename: process.env.RENDER ? ':memory:' : './banco_prova.sqlite',
         driver: sqlite3.Database
     });
 }
-
 async function setupDb() {
     const db = await openDb();
     

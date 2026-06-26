@@ -1,1 +1,5 @@
-prompt para criar o feed e a feature de Dark Mode feito por [Nome da Dupla]": "Preciso criar o Front-end de um mini Twitter em React. Crie o componente do Feed que faça uma requisição GET com axios para 'http://localhost:3000/posts' e mostre a lista. Além disso, me mostre como implementar uma Feature Extra de Dark Mode simples no App.jsx usando useState para trocar uma classe CSS no body.
+prompt para criar o feed e a feature de Dark Mode feito por [Nome da Dupla]": 
+"Preciso criar o Front-end de um mini Twitter em React. 
+Crie o componente do Feed que faça uma requisição GET com axios para 'http://localhost:3000/posts' 
+e mostre a lista. Além disso, me mostre como implementar uma Feature Extra de Dark Mode simples 
+no App.jsx usando useState para trocar uma classe CSS no body.
