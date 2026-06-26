@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { openDb } = require('./database');
+const { openDb } = require('./database');   
 
 const app = express();
 app.use(express.json());
@@ -80,4 +80,17 @@ app.post('/posts/:id/like', verificarToken, async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log('🚀 Backend rodando na porta 3000'));
+async function iniciarServidor() {
+    try {
+        // Força o servidor a abrir o banco primeiro para garantir que as tabelas existam
+        const db = await openDb(); 
+        
+        app.listen(3000, () => {
+            console.log('🚀 Backend rodando na porta 3000 e banco de dados pronto!');
+        });
+    } catch (error) {
+        console.error("Erro ao iniciar o banco de dados:", error);
+    }
+}
+
+iniciarServidor();
